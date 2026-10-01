@@ -1,0 +1,122 @@
+/* ==========================================================================
+   ZENITH MOBILE — DESIGN SYSTEM & IONIC THEME TOKENS
+   ========================================================================== */
+
+:root {
+  --font-sans: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --ion-font-family: var(--font-sans);
+
+  /* Default Emerald Dark Theme */
+  --bg-app: #080f0a;
+  --bg-surface: #101a13;
+  --bg-surface-elevated: #16241b;
+  --bg-glass: rgba(16, 26, 19, 0.85);
+  --bg-glass-card: #101a13;
+  --bg-hover: rgba(16, 185, 129, 0.1);
+  --bg-active: rgba(16, 185, 129, 0.18);
+
+  --border-subtle: rgba(255, 255, 255, 0.08);
+  --border-medium: rgba(255, 255, 255, 0.14);
+  --border-focus: #10b981;
+
+  --text-main: #f8fafc;
+  --text-secondary: #cbd5e1;
+  --text-muted: #94a3b8;
+  --text-dim: #64748b;
+
+  /* Brand Accents */
+  --primary: #10b981;
+  --primary-hover: #059669;
+  --primary-light: rgba(16, 185, 129, 0.16);
+  --primary-glow: rgba(16, 185, 129, 0.25);
+  --primary-border: rgba(16, 185, 129, 0.35);
+
+  --success: #10b981;
+  --success-bg: rgba(16, 185, 129, 0.15);
+  --success-border: rgba(16, 185, 129, 0.25);
+
+  /* Priorities */
+  --priority-urgent: #f43f5e;
+  --priority-urgent-bg: rgba(244, 63, 94, 0.15);
+  --priority-urgent-border: rgba(244, 63, 94, 0.3);
+
+  --priority-high: #f97316;
+  --priority-high-bg: rgba(249, 115, 22, 0.15);
+  --priority-high-border: rgba(249, 115, 22, 0.3);
+
+  --priority-medium: #0ea5e9;
+  --priority-medium-bg: rgba(14, 165, 233, 0.15);
+  --priority-medium-border: rgba(14, 165, 233, 0.3);
+
+  --priority-low: #64748b;
+  --priority-low-bg: rgba(100, 116, 139, 0.15);
+  --priority-low-border: rgba(100, 116, 139, 0.3);
+
+  /* Collaboration & Helpers */
+  --help-accent: #a855f7;
+  --help-accent-bg: rgba(168, 85, 247, 0.15);
+  --help-border: rgba(168, 85, 247, 0.35);
+
+  --assignee-accent: #10b981;
+  --assignee-accent-bg: rgba(16, 185, 129, 0.15);
+
+  /* Calendar Markers */
+  --marker-created: #10b981;
+  --marker-created-bg: rgba(16, 185, 129, 0.18);
+  --marker-due: #f97316;
+  --marker-due-bg: rgba(249, 115, 22, 0.18);
+
+  /* Ionic Overrides */
+  --ion-background-color: var(--bg-app);
+  --ion-text-color: var(--text-main);
+  --ion-item-background: var(--bg-surface);
+  --ion-card-background: var(--bg-surface);
+  --ion-toolbar-background: var(--bg-surface);
+  --ion-tab-bar-background: var(--bg-surface);
+  --ion-color-primary: var(--primary);
+  --ion-color-primary-rgb: 16, 185, 129;
+  --ion-color-primary-contrast: #ffffff;
+  --ion-color-primary-shade: var(--primary-hover);
+  --ion-color-primary-tint: #34d399;
+
+  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.1);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.2), 0 2px 4px -1px rgba(0, 0, 0, 0.1);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.3), 0 4px 6px -2px rgba(0, 0, 0, 0.15);
+  --shadow-modal: 0 20px 25px -5px rgba(0, 0, 0, 0.5);
+
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+  --radius-full: 9999px;
+}
+
+[data-theme="light"] {
+  --bg-app: #f0fdf4;
+  --bg-surface: #ffffff;
+  --bg-surface-elevated: #f4fbf6;
+  --bg-glass: rgba(255, 255, 255, 0.88);
+  --bg-glass-card: #ffffff;
+  --bg-hover: rgba(16, 185, 129, 0.08);
+  --bg-active: rgba(16, 185, 129, 0.15);
+
+  --border-subtle: rgba(0, 0, 0, 0.08);
+  --border-medium: rgba(0, 0, 0, 0.14);
+  --border-focus: #059669;
+
+  --text-main: #0f172a;
+  --text-secondary: #334155;
+  --text-muted: #64748b;
+  --text-dim: #94a3b8;
+
+  --ion-background-color: var(--bg-app);
+  --ion-text-color: var(--text-main);
+  --ion-item-background: var(--bg-surface);
+  --ion-card-background: var(--bg-surface);
+  --ion-toolbar-background: var(--bg-surface);
+  --ion-tab-bar-background: var(--bg-surface);
+
+  --shadow-sm: 0 1px 3px 0 rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.08);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+  --shadow-modal: 0 20px 25px -5px rgba(0, 0, 0, 0.15);
+}

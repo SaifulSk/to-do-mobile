@@ -1,0 +1,7 @@
+{
+  "name": "app-init",
+  "integrations": {
+    "capacitor": {}
+  },
+  "type": "react-vite"
+}
