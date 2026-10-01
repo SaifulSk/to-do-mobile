@@ -1,0 +1,12 @@
+{
+  "java.import.gradle.enabled": false,
+  "java.project.resourceFilters": [
+    "node_modules",
+    "android",
+    "ios"
+  ],
+  "java.project.exclusionFilters": [
+    "**/android/**",
+    "**/ios/**"
+  ]
+}
