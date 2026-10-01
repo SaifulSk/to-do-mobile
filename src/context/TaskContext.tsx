@@ -6,6 +6,7 @@ import { useNotifications } from './NotificationContext';
 import { 
   isConfigured as isFirebaseLive, 
   subscribeToUserTasks,
+  claimLegacyTodosForSaiful,
   addTaskToFirestore,
   updateTaskInFirestore,
   deleteTaskFromFirestore,
@@ -68,17 +69,18 @@ export const useTasks = () => {
   return context;
 };
 
-const LOCAL_TASKS_KEY = 'zenith_mobile_user_tasks';
 const LOCAL_ASSIGNEES_KEY = 'zenith_mobile_assignees_master';
 
 export const TaskProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const { currentUser, isFirebaseConnected } = useAuth();
   const { pushNotification } = useNotifications();
 
-  // Tasks state
+  const userKey = currentUser ? currentUser.uid : 'guest';
+
+  // Tasks state scoped to current user
   const [tasks, setTasks] = useState<Task[]>(() => {
     try {
-      const saved = localStorage.getItem(LOCAL_TASKS_KEY);
+      const saved = localStorage.getItem(`zenith_mobile_user_tasks_${userKey}`);
       if (saved) {
         const parsed = JSON.parse(saved);
         if (Array.isArray(parsed)) return parsed;
@@ -88,6 +90,29 @@ export const TaskProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
     return [];
   });
+
+  const prevTasksRef = useRef<Task[]>(tasks);
+  const isInitialTasksSyncRef = useRef(true);
+
+  // Switch tasks state when currentUser changes (prevents account bleed)
+  useEffect(() => {
+    const currentKey = currentUser ? currentUser.uid : 'guest';
+    try {
+      const saved = localStorage.getItem(`zenith_mobile_user_tasks_${currentKey}`);
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        if (Array.isArray(parsed)) {
+          setTasks(parsed);
+          prevTasksRef.current = parsed;
+          return;
+        }
+      }
+    } catch (e) {
+      // ignore
+    }
+    setTasks([]);
+    prevTasksRef.current = [];
+  }, [currentUser?.uid]);
 
   // Assignees Master state
   const [assignees, setAssignees] = useState<AssigneeMaster[]>(() => {
@@ -114,14 +139,15 @@ export const TaskProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [sortBy, setSortBy] = useState('dueDate');
   const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('asc');
 
-  // Persistence to localStorage
+  // Persistence to user-scoped localStorage
   useEffect(() => {
+    const currentKey = currentUser ? currentUser.uid : 'guest';
     try {
-      localStorage.setItem(LOCAL_TASKS_KEY, JSON.stringify(tasks));
+      localStorage.setItem(`zenith_mobile_user_tasks_${currentKey}`, JSON.stringify(tasks));
     } catch (e) {
       console.warn('Could not persist tasks to localStorage', e);
     }
-  }, [tasks]);
+  }, [tasks, currentUser?.uid]);
 
   useEffect(() => {
     try {
@@ -131,16 +157,26 @@ export const TaskProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
   }, [assignees]);
 
-  const prevTasksRef = useRef<Task[]>(tasks);
-  const isInitialTasksSyncRef = useRef(true);
-
-  // Firestore Sync: Tasks
+  // Firestore Sync: Tasks (Strictly filtered by currentUser.uid)
   useEffect(() => {
-    if (!isFirebaseConnected) return;
+    if (!isFirebaseConnected || !currentUser) {
+      if (!currentUser) {
+        setLoading(false);
+      }
+      return;
+    }
 
     setLoading(true);
+
+    // If logging in as saiful@yopmail.com, ensure all legacy todos are assigned to this user's UID
+    if (currentUser.email === 'saiful@yopmail.com') {
+      claimLegacyTodosForSaiful(currentUser.uid).catch((err) => {
+        console.warn('Could not claim todos for saiful:', err);
+      });
+    }
+
     const unsubscribe = subscribeToUserTasks(
-      currentUser ? currentUser.uid : null,
+      currentUser.uid,
       (firestoreTasks) => {
         if (Array.isArray(firestoreTasks)) {
           // Detect remote completions across devices
@@ -167,7 +203,7 @@ export const TaskProvider: React.FC<{ children: React.ReactNode }> = ({ children
     );
 
     return () => unsubscribe();
-  }, [currentUser, isFirebaseConnected, pushNotification]);
+  }, [currentUser?.uid, currentUser?.email, isFirebaseConnected, pushNotification]);
 
   // Firestore Sync: Assignees Master Directory
   useEffect(() => {
@@ -208,7 +244,9 @@ export const TaskProvider: React.FC<{ children: React.ReactNode }> = ({ children
     const newTask: Task = {
       ...taskData,
       id: tempId,
-      createdAt: taskData.createdAt || format(new Date(), 'yyyy-MM-dd')
+      createdAt: taskData.createdAt || format(new Date(), 'yyyy-MM-dd'),
+      userId: currentUser ? currentUser.uid : 'user-local',
+      userEmail: currentUser?.email || 'user-local'
     };
 
     // Optimistic UI update

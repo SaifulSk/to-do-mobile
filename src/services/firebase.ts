@@ -19,6 +19,8 @@ import {
   setDoc,
   onSnapshot, 
   query, 
+  where,
+  getDocs,
   orderBy, 
   serverTimestamp,
   Firestore,
@@ -89,17 +91,41 @@ export const clearFirebaseConfig = () => {
 
 /* --- Real-Time Firestore Tasks API --- */
 
+export const claimLegacyTodosForSaiful = async (targetUserId: string) => {
+  if (!db || !isConfigured || !targetUserId) return;
+  const currentDb = db;
+  try {
+    const legacyQ = query(
+      collection(currentDb, 'todos'),
+      where('userEmail', '==', 'saiful@yopmail.com')
+    );
+    const snap = await getDocs(legacyQ);
+    const updates = snap.docs
+      .filter((d) => d.data().userId !== targetUserId)
+      .map((d) => updateDoc(doc(currentDb, 'todos', d.id), { userId: targetUserId }));
+    if (updates.length > 0) {
+      await Promise.all(updates);
+    }
+  } catch (e) {
+    console.warn('Error claiming legacy todos for saiful@yopmail.com:', e);
+  }
+};
+
 export const subscribeToUserTasks = (
   userId: string | null, 
   onData: (tasks: Task[]) => void, 
   onError?: (err: any) => void
 ): Unsubscribe => {
-  if (!db || !isConfigured) return () => {};
+  if (!db || !isConfigured || !userId) {
+    onData([]);
+    return () => {};
+  }
 
   try {
+    // Isolated per user account
     const q = query(
       collection(db, 'todos'),
-      orderBy('createdAt', 'desc')
+      where('userId', '==', userId)
     );
 
     return onSnapshot(q, (snapshot) => {
@@ -111,6 +137,14 @@ export const subscribeToUserTasks = (
           createdAt: data.createdAt?.toDate ? data.createdAt.toDate().toISOString() : data.createdAt,
         } as Task;
       });
+
+      // In-memory sort by createdAt descending (avoids requiring composite indexes in Firestore)
+      tasks.sort((a, b) => {
+        const timeA = a.createdAt ? new Date(a.createdAt).getTime() : 0;
+        const timeB = b.createdAt ? new Date(b.createdAt).getTime() : 0;
+        return timeB - timeA;
+      });
+
       onData(tasks);
     }, (error) => {
       console.warn('Firestore subscription notice (tasks):', error);

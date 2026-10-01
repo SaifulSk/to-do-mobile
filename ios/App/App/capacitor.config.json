@@ -16,9 +16,7 @@
 		}
 	},
 	"packageClassList": [
-		"AppPlugin",
 		"HapticsPlugin",
-		"KeyboardPlugin",
-		"StatusBarPlugin"
+		"KeyboardPlugin"
 	]
 }

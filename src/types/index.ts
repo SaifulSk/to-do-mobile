@@ -29,6 +29,8 @@ export interface Task {
   assignedTo?: AssigneeInfo | null;
   needHelpFrom?: HelperInfo | null;
   tags?: string[];
+  userId?: string;
+  userEmail?: string;
   updatedAt?: string;
 }
 
