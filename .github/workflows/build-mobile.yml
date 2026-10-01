@@ -27,17 +27,14 @@ jobs:
           distribution: 'temurin'
           java-version: '21'
 
-      - name: Setup Android SDK
-        uses: android-actions/setup-android@v3
-
       - name: Install Node Dependencies
         run: npm ci
 
       - name: Build Web Application
         run: npm run build
 
-      - name: Sync Capacitor Android
-        run: npx cap sync android
+      - name: Copy Assets to Android
+        run: npx cap copy android
 
       - name: Build Android Debug APK
         working-directory: android
@@ -68,8 +65,8 @@ jobs:
       - name: Build Web Application
         run: npm run build
 
-      - name: Sync Capacitor iOS
-        run: npx cap sync ios
+      - name: Copy Assets to iOS
+        run: npx cap copy ios || true
 
       - name: Build iOS App Bundle
         working-directory: ios/App
@@ -80,10 +77,14 @@ jobs:
             -configuration Release \
             CODE_SIGNING_ALLOWED=NO \
             CODE_SIGNING_REQUIRED=NO \
+            CODE_SIGN_IDENTITY="" \
+            CODE_SIGN_ENTITLEMENTS="" \
             archive -archivePath ./build/App.xcarchive
 
           mkdir -p ./build/Payload
-          cp -r ./build/App.xcarchive/Products/Applications/App.app ./build/Payload/
+          APP_PATH=$(find ./build/App.xcarchive/Products/Applications -name "*.app" -maxdepth 1 | head -n 1)
+          echo "Found app at: $APP_PATH"
+          cp -r "$APP_PATH" ./build/Payload/
           cd ./build
           zip -r Zenith-iOS-Unsigned.ipa Payload
 

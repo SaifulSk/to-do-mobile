@@ -21,6 +21,8 @@
 !/.vscode/extensions.json
 !/.vscode/settings.json
 .idea
+*.project
+*.classpath
 
 # Mobile build outputs
 *.apk
