@@ -53,7 +53,7 @@ export interface InAppNotification {
 
 export interface UserPreferences {
   palette?: string;
-  defaultView?: 'list' | 'compact' | 'calendar';
+  defaultView?: 'list' | 'table' | 'calendar' | 'compact';
   theme?: 'dark' | 'light';
   updatedAt?: any;
 }

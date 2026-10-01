@@ -12,7 +12,8 @@ import {
 } from '@ionic/react';
 import { IonReactRouter } from '@ionic/react-router';
 import { 
-  checkboxOutline, 
+  listOutline,
+  gridOutline,
   calendarOutline, 
   peopleOutline, 
   personOutline 
@@ -91,7 +92,8 @@ const MainTabs: React.FC = () => {
   return (
     <IonTabs>
       <IonRouterOutlet>
-        <Route path="/tasks" element={<TasksPage />} />
+        <Route path="/tasks" element={<TasksPage initialView="list" />} />
+        <Route path="/table" element={<TasksPage initialView="table" />} />
         <Route path="/calendar" element={<CalendarPage />} />
         <Route path="/directory" element={<DirectoryPage />} />
         <Route path="/profile" element={<ProfilePage />} />
@@ -100,8 +102,13 @@ const MainTabs: React.FC = () => {
 
       <IonTabBar slot="bottom">
         <IonTabButton tab="tasks" href="/tasks">
-          <IonIcon aria-hidden="true" icon={checkboxOutline} />
-          <IonLabel>Tasks</IonLabel>
+          <IonIcon aria-hidden="true" icon={listOutline} />
+          <IonLabel>List</IonLabel>
+        </IonTabButton>
+
+        <IonTabButton tab="table" href="/table">
+          <IonIcon aria-hidden="true" icon={gridOutline} />
+          <IonLabel>Table</IonLabel>
         </IonTabButton>
 
         <IonTabButton tab="calendar" href="/calendar">

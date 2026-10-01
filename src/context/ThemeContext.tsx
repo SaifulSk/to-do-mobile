@@ -15,8 +15,8 @@ interface ThemeContextType {
   setAccountPalette: (id: string) => Promise<void>;
   availablePalettes: Palette[];
   isSavingPalette: boolean;
-  defaultView: 'list' | 'compact' | 'calendar';
-  setDefaultView: (view: 'list' | 'compact' | 'calendar') => Promise<void>;
+  defaultView: 'list' | 'table' | 'compact' | 'calendar';
+  setDefaultView: (view: 'list' | 'table' | 'compact' | 'calendar') => Promise<void>;
 }
 
 const ThemeContext = createContext<ThemeContextType | null>(null);
@@ -42,8 +42,8 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ childre
 
   const [isSavingPalette, setIsSavingPalette] = useState(false);
 
-  const [defaultView, setDefaultView] = useState<'list' | 'compact' | 'calendar'>(() => {
-    return (localStorage.getItem('zenith_default_view') as 'list' | 'compact' | 'calendar') || 'list';
+  const [defaultView, setDefaultView] = useState<'list' | 'table' | 'compact' | 'calendar'>(() => {
+    return (localStorage.getItem('zenith_default_view') as any) || 'list';
   });
 
   useEffect(() => {
@@ -73,7 +73,7 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     }
 
     const viewKey = `zenith_default_view_${currentUser.uid}`;
-    const cachedUserView = localStorage.getItem(viewKey) as 'list' | 'compact' | 'calendar';
+    const cachedUserView = localStorage.getItem(viewKey) as 'list' | 'table' | 'compact' | 'calendar';
     if (cachedUserView) {
       setDefaultView(cachedUserView);
     }
@@ -125,7 +125,7 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     }
   }, [currentUser, theme]);
 
-  const setAccountDefaultView = useCallback(async (view: 'list' | 'compact' | 'calendar') => {
+  const setAccountDefaultView = useCallback(async (view: 'list' | 'table' | 'compact' | 'calendar') => {
     if (!view) return;
 
     setDefaultView(view);
